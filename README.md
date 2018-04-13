@@ -1,4 +1,5 @@
 # gulp-yaml-update
+[![CircleCI](https://circleci.com/gh/ocrosby/gulp-yaml-update.svg?style=svg)](https://circleci.com/gh/ocrosby/gulp-yaml-update)
 [![Coverage Status](https://coveralls.io/repos/github/ocrosby/gulp-yaml-update/badge.svg?branch=master)](https://coveralls.io/github/ocrosby/gulp-yaml-update?branch=master)
 
 A configurable gulp task to update fields in a yaml document.
