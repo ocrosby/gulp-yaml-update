@@ -75,7 +75,31 @@ module.exports = (() => {
     };
 
     YamlUpdater.prototype.processLine = function (directive, line) {
-        throw new Error('Not Implemented');
+        const tokens = YamlUpdater.SplitPath(directive.path);
+
+        let pos;
+        let property;
+        let processedLine;
+
+        if (YamlUpdater.IsCommentLine(line)) {
+            return line;
+        }
+
+        if (!YamlUpdater.IsPropertyLine(line)) {
+            return line;
+        }
+
+        property = `${tokens[0]}:`;
+        pos = line.indexOf(property);
+
+        if (pos < 0) {
+            // The specified property was not found.
+            return line;
+        }
+
+        processedLine = `${line.substr(0, pos + property.length)} ${directive.value}`;
+
+        return processedLine;
     };
 
     /**
@@ -88,48 +112,11 @@ module.exports = (() => {
      * @returns {*}
      */
     YamlUpdater.prototype.exec = function (directive, offset, count, lines) {
-        const tokens = YamlUpdater.SplitPath(directive.path);
-
         let i;
-        let pos;
-        let currentToken;
-        let currentLine;
 
-        if (tokens.length > 1) {
-            console.log('Todo: Implement nested replacement.');
-            return;
-        }
-
-        currentToken = tokens[0];
         for (i = 0 ; i < lines.length ; i++) {
-            currentLine = lines[i];
-
-            if (YamlUpdater.IsCommentLine(currentLine)) {
-                continue;
-            }
-
-            if (!YamlUpdater.IsPropertyLine(currentLine)) {
-                continue;
-            }
-
-            if (currentLine.indexOf(`${currentToken}:`) < 0) {
-                continue;
-            }
-
-            console.log(`Updating line ${i} [${currentLine}] ...`);
-
-            // Replace the value on the current line, then update it.
-            pos = currentLine.indexOf(':');
-
-            currentLine = currentLine.substr(0, pos + 1);
-            currentLine += ' ';
-            currentLine += directive.value;
-
-            lines[i] = currentLine;
-        }
-
-        // console.log(`Tokens: ${JSON.stringify(tokens)}`);
-        // console.log(`There are ${lines.length} lines.`);
+            lines[i] = this.processLine(directive, lines[i]);
+        } // end for
     };
 
     YamlUpdater.prototype.getDirectives = function(environment) {
@@ -151,7 +138,7 @@ module.exports = (() => {
             if (environment === currentDirective.env) {
                 selectedDirectives.push(currentDirective);
             } else {
-                console.log(`Skipping the directive ${JSON.stringify(currentDirective)}`);
+                // console.log(`Skipping the directive ${JSON.stringify(currentDirective)}`);
             }
         } // end for
 

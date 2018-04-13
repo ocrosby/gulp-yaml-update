@@ -164,6 +164,72 @@ describe('YamlUpdater', () => {
         });
     });
 
+    describe('getEnvironment', () => {
+        it('returns the environment from the specified options if it is defined', () => {
+            const updater = new YamlUpdater({ environment: 'something' });
+
+            expect(updater.getEnvironment()).to.equal('something');
+        });
+    });
+
+    describe('processLine', () => {
+        let updater;
+
+        before(() => {
+            updater = new YamlUpdater({ environment: 'test' });
+        });
+
+        after(() => {
+            updater = null;
+        });
+
+        it('leaves comment lines unaltered', () => {
+            expect(updater.processLine({ path: 'version', value: 'something else'}, '  # abc')).to.equal('  # abc');
+        });
+
+        it('leaves non-property lines unaltered', () => {
+            expect(updater.processLine({ path: 'version', value: 'something else'}, '  - abc')).to.equal('  - abc');
+        });
+
+        it('leaves other properties lines unaltred', () => {
+            expect(updater.processLine({ path: 'version', value: 'something else'}, '  title: something')).to.equal('  title: something');
+        });
+
+        it('can update the version', () => {
+            expect(updater.processLine({ path: 'version', value: 'something else'}, '  version: 0.0.0')).to.equal('  version: something else');
+        });
+    });
+
+    describe('getDirectives', () => {
+        let updater;
+        let directives;
+
+        before(() => {
+            directives = [
+                { path: 'version', value: '1.0.0' },
+                { path: 'title', env: 'test', value: 'Hello World!' },
+                { path: 'title', env: 'development', value: 'thing1' },
+                { path: 'title', env: 'production', value: 'thing2' },
+                { path: 'host', env: 'development', value: 'localhost:10010' },
+                { path: 'host', env: 'production', value: 'some.production.host:81' }
+            ];
+
+            updater = new YamlUpdater({ environment: 'test', directives: directives });
+        });
+
+        after(() => {
+            updater = null;
+        });
+
+        it('returns directives without the env property', () => {
+            const results = updater.getDirectives('test');
+
+            expect(results).to.be.ofSize(2);
+            expect(results[0]).to.equal(directives[0]);
+            expect(results[1]).to.equal(directives[1]);
+        });
+    });
+
     describe('isInDevelopment', () => {
         let original;
         let updater;
