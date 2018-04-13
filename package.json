@@ -1,27 +1,38 @@
 {
-    "name": "gulp-yaml-update",
-    "version": "0.0.0",
-    "description": "A gulp plugin for updating fields in yaml documents.",
-    "main": "index.js",
-    "scripts": {
-        "test": "mocha test.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/ocrosby/gulp-yaml-update.git"
-    },
-    "keywords": [
-        "gulpplugin"
-    ],
-    "author": "Omar Crosby",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/ocrosby/gulp-yaml-update/issues"
-    },
-    "homepage": "https://github.com/ocrosby/gulp-yaml-update#readme",
-    "devDependencies": {
-        "chai": "^4.1.2",
-        "mocha": "^5.1.0",
-        "nyc": "^11.6.0"
-    }
+  "name": "gulp-yaml-update",
+  "version": "0.0.0",
+  "description": "A gulp plugin for updating fields in yaml documents.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ocrosby/gulp-yaml-update.git"
+  },
+  "keywords": [
+    "gulpplugin",
+    "yaml",
+    "update"
+  ],
+  "author": {
+    "name": "Omar Crosby",
+    "url": "https://github.com/ocrosby"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ocrosby/gulp-yaml-update/issues"
+  },
+  "homepage": "https://github.com/ocrosby/gulp-yaml-update#readme",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.4.0",
+    "gulp-jshint": "^2.1.0",
+    "gulp-jsonlint": "^1.2.1",
+    "jshint": "^2.9.5",
+    "mocha": "^5.1.0",
+    "nyc": "^11.6.0",
+    "run-sequence": "^2.2.1"
+  }
 }
