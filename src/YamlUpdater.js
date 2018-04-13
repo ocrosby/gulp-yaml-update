@@ -162,14 +162,14 @@ module.exports = (() => {
         let directives;
         let directiveCount;
 
-        console.log(`The environment is "${environment}".`);
-        console.log(`There are ${lines.length} lines.`);
-        console.log();
+        this.log(`The environment is "${environment}".`);
+        this.log(`There are ${lines.length} lines.`);
+        this.log();
 
         directives = this.getDirectives(environment);
         directiveCount = directives.length;
 
-        console.log();
+        this.log();
 
         if (directiveCount === 0) {
             this.log('There are no directives to execute.');
@@ -188,12 +188,10 @@ module.exports = (() => {
             this.exec(currentDirective, i, directives.length, lines);
         } // end for
 
-        console.log();
+        this.log();
 
         // Build the updated YAML file.
         yaml = '';
-
-        console.log(`There are still ${lines.length} lines...`);
         for (i = 0 ; i < lines.length ; i++) {
             currentLine = lines[i];
             yaml += `${currentLine}\r`;

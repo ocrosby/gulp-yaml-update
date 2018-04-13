@@ -230,6 +230,44 @@ describe('YamlUpdater', () => {
         });
     });
 
+    describe('update', () => {
+        let updater;
+        let directives;
+
+        before(() => {
+            updater = new YamlUpdater({ environment: 'test', directives: directives });
+        });
+
+        after(() => {
+            updater = null;
+        });
+
+        beforeEach(() => {
+            updater.options.directives = [
+                { path: 'version', value: '1.0.0' },
+                { path: 'title', env: 'test', value: 'Hello World!' },
+                { path: 'title', env: 'development', value: 'thing1' },
+                { path: 'title', env: 'production', value: 'thing2' },
+                { path: 'host', env: 'development', value: 'localhost:10010' },
+                { path: 'host', env: 'production', value: 'some.production.host:81' }
+            ];
+        });
+
+        it('updates a YAML string appropriately', () => {
+            const actual = updater.update('title: ?');
+
+            expect(actual).to.equal('title: Hello World!\r');
+        });
+
+        it('does nothing when the directives are empty', () => {
+            updater.options.directives = [];
+
+            const actual = updater.update('title: ?');
+
+            expect(actual).to.equal('title: ?');
+        });
+    });
+
     describe('isInDevelopment', () => {
         let original;
         let updater;
