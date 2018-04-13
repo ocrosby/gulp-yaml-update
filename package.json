@@ -4,16 +4,16 @@
     "description": "A gulp plugin for updating fields in yaml documents.",
     "main": "src/index.js",
     "scripts": {
-        "test": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov",
+        "test": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov > /dev/null",
         "report-coverage": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov | coveralls"
     },
     "nyc": {
         "check-coverage": true,
         "per-file": false,
-        "lines": 0,
-        "statements": 0,
-        "functions": 0,
-        "branches": 0,
+        "lines": 43,
+        "statements": 43,
+        "functions": 57,
+        "branches": 20,
         "include": [
             "src/**/*.js"
         ],
@@ -81,5 +81,8 @@
         "nyc": "^11.6.0",
         "run-sequence": "^2.2.1",
         "sinon": "^4.5.0"
+    },
+    "dependencies": {
+        "through2": "^2.0.3"
     }
 }

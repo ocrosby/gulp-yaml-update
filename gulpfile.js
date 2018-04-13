@@ -27,12 +27,11 @@ gulp.task('lint', () => {
         .pipe(jsonlint.reporter());
 
     let javascriptFiles = gulp.src([
-        './*.js'
+        './src/**/*.js',
+        './test/**/*.js'
     ])
         .pipe(jshint())
-        .pipe(jshint.reporter(checkstyleFileReporter))
-        .pipe(jshint.reporter('default'))
-        .pipe(jshint.reporter('fail'));
+        .pipe(jshint.reporter(checkstyleFileReporter));
 
     return merge(jsonFiles, javascriptFiles);
 });
