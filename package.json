@@ -1,38 +1,85 @@
 {
-  "name": "gulp-yaml-update",
-  "version": "0.0.0",
-  "description": "A gulp plugin for updating fields in yaml documents.",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha test.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ocrosby/gulp-yaml-update.git"
-  },
-  "keywords": [
-    "gulpplugin",
-    "yaml",
-    "update"
-  ],
-  "author": {
-    "name": "Omar Crosby",
-    "url": "https://github.com/ocrosby"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ocrosby/gulp-yaml-update/issues"
-  },
-  "homepage": "https://github.com/ocrosby/gulp-yaml-update#readme",
-  "devDependencies": {
-    "chai": "^4.1.2",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.4.0",
-    "gulp-jshint": "^2.1.0",
-    "gulp-jsonlint": "^1.2.1",
-    "jshint": "^2.9.5",
-    "mocha": "^5.1.0",
-    "nyc": "^11.6.0",
-    "run-sequence": "^2.2.1"
-  }
+    "name": "gulp-yaml-update",
+    "version": "0.0.0",
+    "description": "A gulp plugin for updating fields in yaml documents.",
+    "main": "src/index.js",
+    "scripts": {
+        "test": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov",
+        "report-coverage": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov | coveralls"
+    },
+    "nyc": {
+        "check-coverage": true,
+        "per-file": false,
+        "lines": 0,
+        "statements": 0,
+        "functions": 0,
+        "branches": 0,
+        "include": [
+            "src/**/*.js"
+        ],
+        "exclude": [
+            "test/**/*.spec.js"
+        ],
+        "reporter": [
+            "lcov",
+            "cobertura"
+        ],
+        "cache": true,
+        "all": true,
+        "report-dir": "./coverage",
+        "watermarks": {
+            "lines": [
+                80,
+                95
+            ],
+            "functions": [
+                80,
+                95
+            ],
+            "branches": [
+                80,
+                95
+            ],
+            "statements": [
+                80,
+                95
+            ]
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ocrosby/gulp-yaml-update.git"
+    },
+    "keywords": [
+        "gulpplugin",
+        "yaml",
+        "update"
+    ],
+    "author": {
+        "name": "Omar Crosby",
+        "url": "https://github.com/ocrosby"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ocrosby/gulp-yaml-update/issues"
+    },
+    "homepage": "https://github.com/ocrosby/gulp-yaml-update#readme",
+    "devDependencies": {
+        "chai": "^4.1.2",
+        "coveralls": "^3.0.0",
+        "gulp": "^3.9.1",
+        "gulp-clean": "^0.4.0",
+        "gulp-jshint": "^2.1.0",
+        "gulp-jsonlint": "^1.2.1",
+        "jshint": "^2.9.5",
+        "jshint-checkstyle-file-reporter": "0.0.1",
+        "merge-stream": "^1.0.1",
+        "mocha": "^5.1.0",
+        "mocha-junit-reporter": "^1.17.0",
+        "mocha-lcov-reporter": "^1.3.0",
+        "mocha-multi-reporters": "^1.1.7",
+        "nyc": "^11.6.0",
+        "run-sequence": "^2.2.1",
+        "sinon": "^4.5.0"
+    }
 }
