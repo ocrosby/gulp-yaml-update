@@ -5,16 +5,16 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "gulp lint",
-    "test": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov > /dev/null",
+    "test": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov",
     "report-coverage": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov | coveralls"
   },
   "nyc": {
     "check-coverage": true,
     "per-file": false,
-    "lines": 85,
-    "statements": 85,
-    "functions": 75,
-    "branches": 82,
+    "lines": 82,
+    "statements": 82,
+    "functions": 66,
+    "branches": 77,
     "include": [
       "src/**/*.js"
     ],

@@ -1,6 +1,7 @@
 'use strict';
 
 const chai = require('chai');
+const sinon = require('sinon');
 const YamlUpdater = require('../src/YamlUpdater');
 
 chai.use(require('chai-string'));
@@ -33,6 +34,52 @@ describe('YamlUpdater', () => {
             const updater = new YamlUpdater(options);
 
             expect(updater.options).to.equal(options);
+        });
+    });
+
+    describe('log', () => {
+        let updater;
+        let testLogger;
+        let logSpy;
+        let errorSpy;
+
+        beforeEach(() => {
+            logSpy = sinon.spy();
+            errorSpy = sinon.spy();
+
+            testLogger = {
+                log: logSpy,
+                error: errorSpy
+            };
+
+            updater = new YamlUpdater(null, testLogger);
+        });
+
+        afterEach(() => {
+            updater = null;
+            testLogger = null;
+
+            errorSpy = null;
+            logSpy = null;
+        });
+
+
+        it('calls the log method on the logger when in development', () => {
+            updater.options.environment = 'development';
+
+            updater.log('something');
+
+            expect(logSpy.calledOnce).to.equal(true);
+            expect(logSpy.getCalls()[0].args).to.be.ofSize(1);
+            expect(logSpy.getCalls()[0].args).to.be.containing('something');
+        });
+
+        it('does not call the log method on the logger when not in development', () => {
+            updater.options.environment = 'other';
+
+            updater.log('something');
+
+            expect(logSpy.calledOnce).to.equal(false);
         });
     });
 
@@ -269,81 +316,39 @@ describe('YamlUpdater', () => {
     });
 
     describe('isInDevelopment', () => {
-        let original;
+        let getEnvironmentStub;
         let updater;
 
-        before(() => {
-            updater = new YamlUpdater();
-        });
-
-        after(() => {
-            updater = null;
-        });
-
         beforeEach(() => {
-            original = process.env.NODE_ENV;
+            updater = new YamlUpdater();
+            getEnvironmentStub = sinon.stub(updater, 'getEnvironment');
         });
 
         afterEach(() => {
-            process.env.NODE_ENV = original;
+            getEnvironmentStub.restore();
+            updater = null;
         });
 
-        it('returns true when the NODE_ENV variable is set to "development"', () => {
-            process.env.NODE_ENV = 'development';
+        it('returns true when getEnvironment returns "development"', () => {
+            getEnvironmentStub.onCall(0).returns('development');
 
             expect(updater.isInDevelopment()).to.equal(true);
         });
 
-        it('returns true when the NODE_ENV variable is set to "  development"', () => {
-            process.env.NODE_ENV = '  development';
-
-            expect(updater.isInDevelopment()).to.equal(true);
-        });
-
-        it('returns true when the NODE_ENV variable is set to "development  "', () => {
-            process.env.NODE_ENV = 'development  ';
-
-            expect(updater.isInDevelopment()).to.equal(true);
-        });
-
-        it('returns true when the NODE_ENV variable is set to " development  "', () => {
-            process.env.NODE_ENV = ' development  ';
-
-            expect(updater.isInDevelopment()).to.equal(true);
-        });
-
-        it('returns true when the NODE_ENV variable is set to "DEVELOPMENT"', () => {
-            process.env.NODE_ENV = 'DEVELOPMENT';
-
-            expect(updater.isInDevelopment()).to.equal(true);
-        });
-
-        it('returns true when the NODE_ENV variable is set to "Development"', () => {
-            process.env.NODE_ENV = 'Development';
-
-            expect(updater.isInDevelopment()).to.equal(true);
-        });
-
-        it('returns false when the NODE_ENV varible is set to "production"', () => {
-            process.env.NODE_ENV = 'production';
+        it('returns false when getEnvironment returns "production"', () => {
+            getEnvironmentStub.onCall(0).returns('production');
 
             expect(updater.isInDevelopment()).to.equal(false);
         });
 
-        it('returns false when the NODE_ENV varible is set to "something"', () => {
-            process.env.NODE_ENV = 'something';
+        it('returns false when getEnvironment returns "something"', () => {
+            getEnvironmentStub.onCall(0).returns('something');
 
             expect(updater.isInDevelopment()).to.equal(false);
         });
 
-        it('returns true when the NODE_ENV varible is empty', () => {
-            process.env.NODE_ENV = '';
-
-            expect(updater.isInDevelopment()).to.equal(true);
-        });
-
-        it('returns false when the NODE_ENV varible contains only spaces', () => {
-            process.env.NODE_ENV = '     ';
+        it('returns false when getEnvironment returns an empty string', () => {
+            getEnvironmentStub.onCall(0).returns('');
 
             expect(updater.isInDevelopment()).to.equal(false);
         });

@@ -1,12 +1,19 @@
+const Logger = require('./Logger');
+
 module.exports = (() => {
     'use strict';
 
-    function YamlUpdater(options) {
+    function YamlUpdater(options, logger) {
         if (!options) {
             options = YamlUpdater.DEFAULT_OPTIONS;
         }
 
+        if (!logger) {
+            logger = Logger;
+        }
+
         this.options = options;
+        this.logger = logger;
     }
     YamlUpdater.DEFAULT_ENVIRONMENT = 'development';
 
@@ -54,7 +61,7 @@ module.exports = (() => {
      */
     YamlUpdater.prototype.log = function (message) {
         if (this.isInDevelopment()) {
-            console.log(message);
+            this.logger.log(message);
         }
     };
 
@@ -74,6 +81,13 @@ module.exports = (() => {
         return false;
     };
 
+    /**
+     * Applies the specified directive to the given line.
+     *
+     * @param directive
+     * @param line
+     * @returns {*}
+     */
     YamlUpdater.prototype.processLine = function (directive, line) {
         const tokens = YamlUpdater.SplitPath(directive.path);
 
@@ -119,6 +133,12 @@ module.exports = (() => {
         } // end for
     };
 
+    /**
+     * Retrieve a filtered set of directives appropriate for the specified environment.
+     *
+     * @param environment
+     * @returns {Array}
+     */
     YamlUpdater.prototype.getDirectives = function(environment) {
         const directives = this.options.directives;
         const directiveCount = directives.length;
@@ -138,7 +158,7 @@ module.exports = (() => {
             if (environment === currentDirective.env) {
                 selectedDirectives.push(currentDirective);
             } else {
-                // console.log(`Skipping the directive ${JSON.stringify(currentDirective)}`);
+                // this.logger.log(`Skipping the directive ${JSON.stringify(currentDirective)}`);
             }
         } // end for
 
@@ -148,7 +168,6 @@ module.exports = (() => {
     /**
      * Updates a yaml document according to the specified array of directives.
      *
-     * @param directives
      * @param yaml
      * @returns {*}
      */
