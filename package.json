@@ -4,6 +4,7 @@
   "description": "A gulp plugin for updating fields in yaml documents.",
   "main": "src/index.js",
   "scripts": {
+    "clean": "gulp clean",
     "lint": "gulp lint",
     "test": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov",
     "report-coverage": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov | coveralls"
@@ -11,10 +12,10 @@
   "nyc": {
     "check-coverage": true,
     "per-file": false,
-    "lines": 82,
-    "statements": 82,
-    "functions": 66,
-    "branches": 77,
+    "lines": 74,
+    "statements": 74,
+    "functions": 40,
+    "branches": 74,
     "include": [
       "src/**/*.js"
     ],
@@ -86,6 +87,7 @@
     "sinon": "^4.5.0"
   },
   "dependencies": {
+    "bluebird": "^3.5.1",
     "plugin-error": "^1.0.1",
     "through2": "^2.0.3"
   }

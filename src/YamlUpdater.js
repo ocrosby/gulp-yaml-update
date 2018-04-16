@@ -1,16 +1,9 @@
-const Logger = require('./Logger');
-
 module.exports = (() => {
     'use strict';
 
     function YamlUpdater(options, logger) {
-        if (!options) {
-            options = YamlUpdater.DEFAULT_OPTIONS;
-        }
-
-        if (!logger) {
-            logger = Logger;
-        }
+        options = options || YamlUpdater.DEFAULT_OPTIONS;
+        logger = logger || console;
 
         this.options = options;
         this.logger = logger;
@@ -165,17 +158,32 @@ module.exports = (() => {
         return selectedDirectives;
     };
 
+    YamlUpdater.prototype.buildUpdatedYaml = function (lines) {
+        let i;
+        let yaml;
+        let currentLine;
+
+        // Build the updated YAML file.
+        yaml = '';
+        for (i = 0 ; i < lines.length ; i++) {
+            currentLine = lines[i];
+            yaml += `${currentLine}\r`;
+        } // end for
+
+        return yaml;
+    };
+
     /**
      * Updates a yaml document according to the specified array of directives.
      *
      * @param yaml
      * @returns {*}
      */
-    YamlUpdater.prototype.update = function(yaml) {
+    YamlUpdater.prototype.update = function(lines) {
         const environment = this.getEnvironment();
-        const lines = yaml.match(/[^\r\n]+/g);
 
         let i;
+        let yaml;
         let currentLine;
         let currentDirective;
         let directives;
@@ -193,14 +201,10 @@ module.exports = (() => {
         if (directiveCount === 0) {
             this.log('There are no directives to execute.');
 
-            return yaml;
+            return this.buildUpdatedYaml(lines);
         }
 
-        if (directiveCount === 1) {
-            this.log('There is a single directive to execute.');
-        } else {
-            this.log(`There are ${directiveCount} directives to execute.`);
-        }
+        this.log(`Directive count: ${directiveCount}`);
 
         for (i = 0; i < directiveCount; i++) {
             currentDirective = directives[i];
@@ -210,13 +214,7 @@ module.exports = (() => {
         this.log();
 
         // Build the updated YAML file.
-        yaml = '';
-        for (i = 0 ; i < lines.length ; i++) {
-            currentLine = lines[i];
-            yaml += `${currentLine}\r`;
-        }
-
-        return yaml;
+        return this.buildUpdatedYaml(lines);
     };
 
     return YamlUpdater;

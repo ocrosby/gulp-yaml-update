@@ -301,7 +301,8 @@ describe('YamlUpdater', () => {
         });
 
         it('updates a YAML string appropriately', () => {
-            const actual = updater.update('title: ?');
+            const lines = ['title: ?'];
+            const actual = updater.update(lines);
 
             expect(actual).to.equal('title: Hello World!\r');
         });
@@ -309,9 +310,39 @@ describe('YamlUpdater', () => {
         it('does nothing when the directives are empty', () => {
             updater.options.directives = [];
 
-            const actual = updater.update('title: ?');
+            const lines = ['title: ?'];
+            const actual = updater.update(lines);
 
-            expect(actual).to.equal('title: ?');
+            expect(actual).to.equal('title: ?\r');
+        });
+    });
+
+    describe('getEnvironment', () => {
+        let originalEnviornment;
+
+        beforeEach(() => {
+            originalEnviornment = process.env.NODE_ENV;
+        });
+
+        afterEach(() => {
+            process.env.NODE_ENV = originalEnviornment;
+        });
+
+        it('returns the default environment when the environment is not defined on the options or the NODE_ENV variable', () => {
+            const updater = new YamlUpdater();
+
+            updater.options.environment = null;
+
+            expect(updater.getEnvironment()).to.equal('development');
+        });
+
+        it('returns NODE_ENV when the environment is not defined on the options', () => {
+            const updater = new YamlUpdater();
+
+            updater.options.environment = null;
+            process.env.NODE_ENV = 'something';
+
+            expect(updater.getEnvironment()).to.equal('something');
         });
     });
 
