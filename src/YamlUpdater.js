@@ -158,21 +158,6 @@ module.exports = (() => {
         return selectedDirectives;
     };
 
-    YamlUpdater.prototype.buildUpdatedYaml = function (lines) {
-        let i;
-        let yaml;
-        let currentLine;
-
-        // Build the updated YAML file.
-        yaml = '';
-        for (i = 0 ; i < lines.length ; i++) {
-            currentLine = lines[i];
-            yaml += `${currentLine}\r`;
-        } // end for
-
-        return yaml;
-    };
-
     /**
      * Updates a yaml document according to the specified array of directives.
      *
@@ -183,8 +168,6 @@ module.exports = (() => {
         const environment = this.getEnvironment();
 
         let i;
-        let yaml;
-        let currentLine;
         let currentDirective;
         let directives;
         let directiveCount;
@@ -201,7 +184,7 @@ module.exports = (() => {
         if (directiveCount === 0) {
             this.log('There are no directives to execute.');
 
-            return this.buildUpdatedYaml(lines);
+            return;
         }
 
         this.log(`Directive count: ${directiveCount}`);
@@ -214,7 +197,7 @@ module.exports = (() => {
         this.log();
 
         // Build the updated YAML file.
-        return this.buildUpdatedYaml(lines);
+        return;
     };
 
     return YamlUpdater;

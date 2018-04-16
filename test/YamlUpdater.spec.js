@@ -302,18 +302,20 @@ describe('YamlUpdater', () => {
 
         it('updates a YAML string appropriately', () => {
             const lines = ['title: ?'];
-            const actual = updater.update(lines);
 
-            expect(actual).to.equal('title: Hello World!\r');
+            updater.update(lines);
+
+            expect(lines[0]).to.equal('title: Hello World!');
         });
 
         it('does nothing when the directives are empty', () => {
             updater.options.directives = [];
 
             const lines = ['title: ?'];
-            const actual = updater.update(lines);
 
-            expect(actual).to.equal('title: ?\r');
+            updater.update(lines);
+
+            expect(lines[0]).to.equal('title: ?');
         });
     });
 

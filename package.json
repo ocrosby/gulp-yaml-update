@@ -12,9 +12,9 @@
   "nyc": {
     "check-coverage": true,
     "per-file": false,
-    "lines": 74,
-    "statements": 74,
-    "functions": 40,
+    "lines": 71,
+    "statements": 71,
+    "functions": 37,
     "branches": 74,
     "include": [
       "src/**/*.js"
@@ -69,6 +69,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-arrays": "^2.0.0",
+    "chai-as-promised": "^7.1.1",
     "chai-string": "^1.4.0",
     "coveralls": "^3.0.0",
     "gulp": "^3.9.1",

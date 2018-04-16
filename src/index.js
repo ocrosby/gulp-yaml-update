@@ -19,9 +19,9 @@ module.exports = (options) => {
 
         FileSystem.readLines(relativePath, Logger)
             .then((lines) => {
-                const yaml = updater.update(lines);
+                updater.update(lines);
 
-                FileSystem.writeFile(relativePath, yaml, Logger)
+                FileSystem.writeLines(relativePath, lines, Logger)
                     .then(() => {
                         console.log(`Successfuly updated the file "${relativePath}".`);
                     })
