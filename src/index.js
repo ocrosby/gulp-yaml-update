@@ -4,6 +4,7 @@ const PluginError = require('plugin-error');
 const FileSystem = require('./FileSystem');
 const Logger = require('./Logger');
 const YamlUpdater = require('./YamlUpdater');
+const details = require('../package.json');
 
 module.exports = (options) => {
     'use strict';
@@ -20,7 +21,7 @@ module.exports = (options) => {
                 Logger.log(`Successfuly updated the file "${relativePath}".`);
                 callback();
             })
-            .catch((err) => { throw new PluginError(err.message); });
+            .catch((err) => { throw new PluginError(details.name, err.message); });
     });
 };
 

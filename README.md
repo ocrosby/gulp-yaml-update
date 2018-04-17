@@ -66,3 +66,6 @@ gulp.task('default', (callback) => {
     runSequence('yaml-update-prod', callback);
 });
 ```
+
+## References
+* [Understanding Object Streams](https://nodesource.com/blog/understanding-object-streams/)
