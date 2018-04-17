@@ -16,7 +16,10 @@ module.exports = (options) => {
         FileSystem.readLines(relativePath, Logger)
             .then((lines) => updater.update(lines))
             .then((lines) => FileSystem.writeLines(relativePath, lines, Logger))
-            .then(() => Logger.log(`Successfuly updated the file "${relativePath}".`))
+            .then(() => {
+                Logger.log(`Successfuly updated the file "${relativePath}".`);
+                callback();
+            })
             .catch((err) => { throw new PluginError(err.message); });
     });
 };

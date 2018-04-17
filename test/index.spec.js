@@ -12,6 +12,6 @@ describe('index', () => {
             directives: []
         });
 
-        expect(true).to.equal(true);
+        expect(index).to.equal(index);
     });
 });

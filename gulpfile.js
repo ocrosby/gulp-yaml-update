@@ -2,7 +2,6 @@ const gulp = require('gulp');
 const clean = require('gulp-clean');
 const jshint = require('gulp-jshint');
 const jsonlint = require('gulp-jsonlint');
-const merge = require('merge-stream');
 const runSequence = require('run-sequence');
 const checkstyleFileReporter = require('jshint-checkstyle-file-reporter');
 const exec = require('child_process').exec;
@@ -19,21 +18,27 @@ gulp.task('clean', () => {
         .pipe(clean());
 });
 
-gulp.task('lint', () => {
-    let jsonFiles = gulp.src([
+gulp.task('lint', (callback) => {
+    runSequence('jsonlint', 'jshint', callback);
+});
+
+gulp.task('jsonlint', () => {
+    return gulp.src([
         './*.json'
     ])
         .pipe(jsonlint())
         .pipe(jsonlint.reporter());
+});
 
-    let javascriptFiles = gulp.src([
+gulp.task('jshint', () => {
+    return gulp.src([
         './src/**/*.js',
         './test/**/*.js'
     ])
         .pipe(jshint())
-        .pipe(jshint.reporter(checkstyleFileReporter));
-
-    return merge(jsonFiles, javascriptFiles);
+        .pipe(jshint.reporter('jshint-stylish'))
+        .pipe(jshint.reporter(checkstyleFileReporter))
+        .pipe(jshint.reporter('fail'));
 });
 
 gulp.task('test', (callback) => {

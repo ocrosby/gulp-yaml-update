@@ -13,7 +13,7 @@ chai.should();
 
 global.expect = chai.expect;
 
-const fakeLogger = { log: (message) => {}, error: (message) => {}};
+const fakeLogger = { log: () => {}, error: () => {}};
 
 describe('YamlUpdater', () => {
     describe('constructor', () => {

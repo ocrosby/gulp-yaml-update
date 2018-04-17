@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     split: function (text) {
         if (!text) {

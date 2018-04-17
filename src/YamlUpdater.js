@@ -168,37 +168,43 @@ module.exports = (() => {
      */
     YamlUpdater.prototype.update = function(lines) {
         return new Promise((resolve, reject) => {
-            const environment = this.getEnvironment();
-
             let i;
-            let currentDirective;
             let directives;
+            let environment;
             let directiveCount;
+            let currentDirective;
 
-            this.log(`The environment is "${environment}".`);
-            this.log(`There are ${lines.length} lines.`);
-            this.log();
+            try {
+                environment = this.getEnvironment();
 
-            directives = this.getDirectives(environment);
-            directiveCount = directives.length;
+                this.log(`The environment is "${environment}".`);
+                this.log(`There are ${lines.length} lines.`);
+                this.log();
 
-            this.log();
-
-            if (directiveCount === 0) {
-                this.log('There are no directives to execute.');
-
-                resolve(lines);
-            } else {
-                this.log(`Directive count: ${directiveCount}`);
-
-                for (i = 0; i < directiveCount; i++) {
-                    currentDirective = directives[i];
-                    this.exec(currentDirective, i, directives.length, lines);
-                } // end for
+                directives = this.getDirectives(environment);
+                directiveCount = directives.length;
 
                 this.log();
 
-                resolve(lines);
+                if (directiveCount === 0) {
+                    this.log('There are no directives to execute.');
+
+                    resolve(lines);
+                } else {
+                    this.log(`Directive count: ${directiveCount}`);
+
+                    for (i = 0; i < directiveCount; i++) {
+                        currentDirective = directives[i];
+                        this.exec(currentDirective, i, directives.length, lines);
+                    } // end for
+
+                    this.log();
+
+                    resolve(lines);
+                }
+
+            } catch (err) {
+                reject(err);
             }
         });
     };

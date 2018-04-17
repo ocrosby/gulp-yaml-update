@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const sinon = require('sinon');
 
@@ -13,7 +15,7 @@ chai.should();
 
 global.expect = chai.expect;
 
-const fakeLogger = { log: (message) => {}, error: (message) => {}};
+const fakeLogger = { log: () => {}, error: () => {}};
 
 describe('FileSystem', () => {
     describe('readFile', () => {
