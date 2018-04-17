@@ -12,10 +12,10 @@
   "nyc": {
     "check-coverage": true,
     "per-file": false,
-    "lines": 71,
-    "statements": 71,
-    "functions": 37,
-    "branches": 74,
+    "lines": 90,
+    "statements": 90,
+    "functions": 81,
+    "branches": 90,
     "include": [
       "src/**/*.js"
     ],
