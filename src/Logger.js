@@ -1,11 +1,19 @@
 'use strict';
 
 module.exports = {
-    log: function() {
-        console.log.apply(console, Array.prototype.slice.call(arguments));
+    log: function (message) {
+        if (!message) {
+            message = '';
+        }
+
+        console.log(message);
     },
 
-    error: function() {
-        console.error.apply(console, Array.prototype.slice.call(arguments));
+    error: function (message) {
+        if (!message) {
+            message = '';
+        }
+
+        console.error(message);
     }
 };

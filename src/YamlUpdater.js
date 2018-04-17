@@ -1,9 +1,11 @@
+global.Promise = require('bluebird').Promise;
+
 module.exports = (() => {
     'use strict';
 
-    function YamlUpdater(options, logger) {
-        options = options || YamlUpdater.DEFAULT_OPTIONS;
+    function YamlUpdater(logger, options) {
         logger = logger || console;
+        options = options || YamlUpdater.DEFAULT_OPTIONS;
 
         this.options = options;
         this.logger = logger;
@@ -165,39 +167,40 @@ module.exports = (() => {
      * @returns {*}
      */
     YamlUpdater.prototype.update = function(lines) {
-        const environment = this.getEnvironment();
+        return new Promise((resolve, reject) => {
+            const environment = this.getEnvironment();
 
-        let i;
-        let currentDirective;
-        let directives;
-        let directiveCount;
+            let i;
+            let currentDirective;
+            let directives;
+            let directiveCount;
 
-        this.log(`The environment is "${environment}".`);
-        this.log(`There are ${lines.length} lines.`);
-        this.log();
+            this.log(`The environment is "${environment}".`);
+            this.log(`There are ${lines.length} lines.`);
+            this.log();
 
-        directives = this.getDirectives(environment);
-        directiveCount = directives.length;
+            directives = this.getDirectives(environment);
+            directiveCount = directives.length;
 
-        this.log();
+            this.log();
 
-        if (directiveCount === 0) {
-            this.log('There are no directives to execute.');
+            if (directiveCount === 0) {
+                this.log('There are no directives to execute.');
 
-            return;
-        }
+                resolve(lines);
+            } else {
+                this.log(`Directive count: ${directiveCount}`);
 
-        this.log(`Directive count: ${directiveCount}`);
+                for (i = 0; i < directiveCount; i++) {
+                    currentDirective = directives[i];
+                    this.exec(currentDirective, i, directives.length, lines);
+                } // end for
 
-        for (i = 0; i < directiveCount; i++) {
-            currentDirective = directives[i];
-            this.exec(currentDirective, i, directives.length, lines);
-        } // end for
+                this.log();
 
-        this.log();
-
-        // Build the updated YAML file.
-        return;
+                resolve(lines);
+            }
+        });
     };
 
     return YamlUpdater;

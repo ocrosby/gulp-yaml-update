@@ -8,11 +8,8 @@ global.Promise = bluebird.Promise;
 
 module.exports = {
     readFile: function (filePath, logger) {
-        logger = logger || console;
-
         return new Promise((resolve, reject) => {
             logger.log(`Reading the file "${filePath}" ...`);
-
             fs.readFile(filePath, 'utf8', (err, content) => {
                 if (err) {
                     reject(err);
@@ -24,9 +21,8 @@ module.exports = {
     },
 
     writeFile: function (filePath, content, logger) {
-        logger = logger || console;
-
         return new Promise((resolve, reject) => {
+            logger.log(`Writing the file "${filePath}" ...`);
             fs.writeFile(filePath, content, (err) => {
                 if (err) {
                     reject(err);
@@ -38,9 +34,8 @@ module.exports = {
     },
 
     readLines: function (filePath, logger) {
-        logger = logger || console;
-
         return new Promise((resolve, reject) => {
+            logger.log(`Reading lines from "${filePath}" ...`);
             this.readFile(filePath, logger)
                 .then((content) => {
                     const lines = Lines.split(content);
@@ -56,25 +51,18 @@ module.exports = {
     },
 
     writeLines: function (filePath, lines, logger) {
-        logger = logger || console;
-
+        logger.log(`Writing lines to "${filePath}" ...`);
         return new Promise((resolve, reject) => {
-            let content;
+            const content = Lines.join(lines);
 
-            try {
-                content = Lines.join(lines);
-
-                // Write the updated file contents.
-                this.writeFile(filePath, content, logger)
-                    .then(() => {
-                        resolve();
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            } catch(err) {
-                reject(err);
-            }
+            // Write the updated file contents.
+            this.writeFile(filePath, content, logger)
+                .then(() => {
+                    resolve();
+                })
+                .catch((err) => {
+                    reject(err);
+                });
         });
     }
 };

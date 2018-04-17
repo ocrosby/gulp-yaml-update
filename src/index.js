@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const through2 = require('through2');
 const PluginError = require('plugin-error');
@@ -9,29 +8,16 @@ const YamlUpdater = require('./YamlUpdater');
 module.exports = (options) => {
     'use strict';
 
-    const updater = new YamlUpdater(options, Logger);
+    const updater = new YamlUpdater(Logger, options);
 
     return through2.obj((file, enc, callback) => {
-        // Paths are resolved by gulp.
-        const filePath = file.path;
-        const currentDirectory = file.cwd;
-        const relativePath = path.relative(currentDirectory, filePath);
+        const relativePath = path.relative(file.cwd, file.path);
 
         FileSystem.readLines(relativePath, Logger)
-            .then((lines) => {
-                updater.update(lines);
-
-                FileSystem.writeLines(relativePath, lines, Logger)
-                    .then(() => {
-                        console.log(`Successfuly updated the file "${relativePath}".`);
-                    })
-                    .catch((err) => {
-                        throw new PluginError(err.message);
-                    });
-            })
-            .catch((err) => {
-                throw new PluginError(err.message);
-            });
+            .then((lines) => updater.update(lines))
+            .then((lines) => FileSystem.writeLines(relativePath, lines, Logger))
+            .then(() => Logger.log(`Successfuly updated the file "${relativePath}".`))
+            .catch((err) => { throw new PluginError(err.message); });
     });
 };
 

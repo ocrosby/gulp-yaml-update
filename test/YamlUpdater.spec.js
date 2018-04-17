@@ -1,37 +1,43 @@
 'use strict';
 
-const chai = require('chai');
 const sinon = require('sinon');
 const YamlUpdater = require('../src/YamlUpdater');
 
+const chai = require('chai');
+
 chai.use(require('chai-string'));
 chai.use(require('chai-arrays'));
+chai.use(require('chai-as-promised'));
+
+chai.should();
 
 global.expect = chai.expect;
+
+const fakeLogger = { log: (message) => {}, error: (message) => {}};
 
 describe('YamlUpdater', () => {
     describe('constructor', () => {
         it('assigns the default options if none are specified', () => {
-            const updater = new YamlUpdater();
+            const updater = new YamlUpdater(fakeLogger);
 
             expect(updater.options).to.equal(YamlUpdater.DEFAULT_OPTIONS);
         });
 
         it('assigns the default options when given null', () => {
-            const updater = new YamlUpdater(null);
+            const updater = new YamlUpdater(fakeLogger, null);
 
             expect(updater.options).to.equal(YamlUpdater.DEFAULT_OPTIONS);
         });
 
         it('assigns the default options when given undefined', () => {
-            const updater = new YamlUpdater(undefined);
+            const updater = new YamlUpdater(fakeLogger, undefined);
 
             expect(updater.options).to.equal(YamlUpdater.DEFAULT_OPTIONS);
         });
 
         it('assigns a specified options object', () => {
             const options = {};
-            const updater = new YamlUpdater(options);
+            const updater = new YamlUpdater(fakeLogger, options);
 
             expect(updater.options).to.equal(options);
         });
@@ -52,7 +58,7 @@ describe('YamlUpdater', () => {
                 error: errorSpy
             };
 
-            updater = new YamlUpdater(null, testLogger);
+            updater = new YamlUpdater(testLogger, null);
         });
 
         afterEach(() => {
@@ -213,7 +219,7 @@ describe('YamlUpdater', () => {
 
     describe('getEnvironment', () => {
         it('returns the environment from the specified options if it is defined', () => {
-            const updater = new YamlUpdater({ environment: 'something' });
+            const updater = new YamlUpdater(fakeLogger, { environment: 'something' });
 
             expect(updater.getEnvironment()).to.equal('something');
         });
@@ -223,7 +229,7 @@ describe('YamlUpdater', () => {
         let updater;
 
         before(() => {
-            updater = new YamlUpdater({ environment: 'test' });
+            updater = new YamlUpdater(fakeLogger, { environment: 'test' });
         });
 
         after(() => {
@@ -261,7 +267,7 @@ describe('YamlUpdater', () => {
                 { path: 'host', env: 'production', value: 'some.production.host:81' }
             ];
 
-            updater = new YamlUpdater({ environment: 'test', directives: directives });
+            updater = new YamlUpdater(fakeLogger, { environment: 'test', directives: directives });
         });
 
         after(() => {
@@ -281,15 +287,9 @@ describe('YamlUpdater', () => {
         let updater;
         let directives;
 
-        before(() => {
-            updater = new YamlUpdater({ environment: 'test', directives: directives });
-        });
-
-        after(() => {
-            updater = null;
-        });
-
         beforeEach(() => {
+            updater = new YamlUpdater(fakeLogger, { environment: 'test', directives: directives });
+
             updater.options.directives = [
                 { path: 'version', value: '1.0.0' },
                 { path: 'title', env: 'test', value: 'Hello World!' },
@@ -300,22 +300,28 @@ describe('YamlUpdater', () => {
             ];
         });
 
-        it('updates a YAML string appropriately', () => {
-            const lines = ['title: ?'];
-
-            updater.update(lines);
-
-            expect(lines[0]).to.equal('title: Hello World!');
+        afterEach(() => {
+            updater = null;
         });
 
-        it('does nothing when the directives are empty', () => {
+        it('resolves a promise with an appropriately updated YAML line', () => {
+            const lines = ['title: ?'];
+
+            return updater.update(lines).should.be.fulfilled
+                .then((lines) => {
+                    expect(lines[0]).to.equal('title: Hello World!');
+                });
+        });
+
+        it('resolves a promise with an unaltered YAML line when the directives are empty', () => {
             updater.options.directives = [];
 
             const lines = ['title: ?'];
 
-            updater.update(lines);
-
-            expect(lines[0]).to.equal('title: ?');
+            return updater.update(lines).should.be.fulfilled
+                .then((lines) => {
+                    expect(lines[0]).to.equal('title: ?');
+                });
         });
     });
 
