@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "gulp clean",
     "lint": "gulp lint",
-    "test": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov",
+    "test": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json",
     "report-coverage": "nyc mocha ./test/**/*.spec.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-config.json && nyc report --reporter=text-lcov | coveralls"
   },
   "nyc": {
