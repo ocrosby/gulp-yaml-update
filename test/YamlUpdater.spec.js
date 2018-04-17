@@ -323,6 +323,14 @@ describe('YamlUpdater', () => {
                     expect(lines[0]).to.equal('title: ?');
                 });
         });
+
+        it('rejects a promise when getEnvironment throws an error', () => {
+            const lines = ['title: ?'];
+
+            sinon.stub(updater, 'getEnvironment').throws(new Error('getEnvironment blew up'));
+
+            return updater.update(lines).should.be.rejectedWith('getEnvironment blew up');
+        });
     });
 
     describe('getEnvironment', () => {

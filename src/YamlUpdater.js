@@ -35,11 +35,7 @@ module.exports = (() => {
             return this.options.environment;
         }
 
-        if (!process.env.NODE_ENV) {
-            return YamlUpdater.DEFAULT_ENVIRONMENT;
-        }
-
-        return process.env.NODE_ENV.trim().toLowerCase();
+        return !process.env.NODE_ENV ? YamlUpdater.DEFAULT_ENVIRONMENT : process.env.NODE_ENV.trim().toLowerCase();
     };
 
     /**
@@ -61,19 +57,11 @@ module.exports = (() => {
     };
 
     YamlUpdater.IsCommentLine = function (line) {
-        if (typeof line === 'string') {
-            return line.trim().startsWith('#');
-        }
-
-        return false;
+        return typeof line === 'string' ? line.trim().startsWith('#') : false;
     };
 
     YamlUpdater.IsPropertyLine = function (line) {
-        if (typeof line === 'string') {
-            return line.indexOf(':') > 0;
-        }
-
-        return false;
+        return typeof line === 'string' ? line.indexOf(':') > 0 : false;
     };
 
     /**
@@ -90,11 +78,7 @@ module.exports = (() => {
         let property;
         let processedLine;
 
-        if (YamlUpdater.IsCommentLine(line)) {
-            return line;
-        }
-
-        if (!YamlUpdater.IsPropertyLine(line)) {
+        if (YamlUpdater.IsCommentLine(line) || !YamlUpdater.IsPropertyLine(line)) {
             return line;
         }
 
@@ -136,24 +120,20 @@ module.exports = (() => {
      */
     YamlUpdater.prototype.getDirectives = function(environment) {
         const directives = this.options.directives;
-        const directiveCount = directives.length;
 
         let i;
         let currentDirective;
         let selectedDirectives = [];
 
-        for (i = 0 ; i < directiveCount ; i++) {
+        for (i = 0 ; i < directives.length ; i++) {
             currentDirective = directives[i];
 
-            if (!currentDirective.env) {
-                selectedDirectives.push(currentDirective);
-                continue;
-            }
-
-            if (environment === currentDirective.env) {
-                selectedDirectives.push(currentDirective);
+            if (currentDirective.env) {
+                if (environment === currentDirective.env) {
+                    selectedDirectives.push(currentDirective);
+                }
             } else {
-                // this.logger.log(`Skipping the directive ${JSON.stringify(currentDirective)}`);
+                selectedDirectives.push(currentDirective);
             }
         } // end for
 
@@ -172,7 +152,6 @@ module.exports = (() => {
             let directives;
             let environment;
             let directiveCount;
-            let currentDirective;
 
             try {
                 environment = this.getEnvironment();
@@ -194,8 +173,7 @@ module.exports = (() => {
                     this.log(`Directive count: ${directiveCount}`);
 
                     for (i = 0; i < directiveCount; i++) {
-                        currentDirective = directives[i];
-                        this.exec(currentDirective, i, directives.length, lines);
+                        this.exec(directives[i], i, directives.length, lines);
                     } // end for
 
                     this.log();
