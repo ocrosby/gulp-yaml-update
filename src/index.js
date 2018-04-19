@@ -14,14 +14,21 @@ module.exports = (options) => {
     return through2.obj((file, enc, callback) => {
         const relativePath = path.relative(file.cwd, file.path);
 
+        let tempLines;
+
         FileSystem.readLines(relativePath, Logger)
             .then((lines) => updater.update(lines))
-            .then((lines) => FileSystem.writeLines(relativePath, lines, Logger))
+            .then((lines) => {
+                tempLines = lines;
+                return FileSystem.writeLines(relativePath, lines, Logger);
+            })
             .then(() => {
                 Logger.log(`Successfuly updated the file "${relativePath}".`);
-                callback();
+                callback(null, lines);
             })
-            .catch((err) => { throw new PluginError(details.name, err.message); });
+            .catch((err) => {
+                callback(new PluginError(details.name, err.message));
+            });
     });
 };
 
