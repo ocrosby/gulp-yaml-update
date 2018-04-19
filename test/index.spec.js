@@ -12,17 +12,25 @@ chai.use(require('chai-arrays'));
 chai.use(require('chai-as-promised'));
 
 const index = require('../src/index');
+const Logger = require('../src/Logger');
 
 global.expect = chai.expect;
 
 describe('index', () => {
     let mockedFileSystem;
+    let logStub;
+    let errorStub;
 
     beforeEach(() => {
         mockedFileSystem = sinon.mock(fs);
+        logStub = sinon.stub(Logger, 'log');
+        errorStub = sinon.stub(Logger, 'error');
     });
 
     afterEach(() => {
+        errorStub.restore();
+        logStub.restore();
+
         mockedFileSystem.restore();
         mockedFileSystem = null;
     });
