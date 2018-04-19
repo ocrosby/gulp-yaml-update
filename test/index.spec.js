@@ -1,8 +1,8 @@
 'use strict';
 
-// const fs = require('fs');
 // const through2 = require('through2');
 
+const fs = require('fs');
 const FileSystem = require('../src/FileSystem');
 const chai = require('chai');
 const bluebird = require('bluebird');
@@ -14,46 +14,69 @@ chai.use(require('chai-string'));
 chai.use(require('chai-arrays'));
 chai.use(require('chai-as-promised'));
 
-const index = require('../src/index')({
-    environment: 'development',
-    directives: []
-});
+const index = require('../src/index');
 
 global.expect = chai.expect;
 
 describe('index', () => {
+    let mockedFileSystem;
+
+    beforeEach(() => {
+        mockedFileSystem = sinon.mock(fs);
+    });
+
+    afterEach(() => {
+        mockedFileSystem.restore();
+        mockedFileSystem = null;
+    });
+
     it('should leave a file with two comment lines unaltered', (done) => {
-        const readLinesStub = sinon.stub(FileSystem, 'readLines');
-        const mockedFileSystem = sinon.mock(FileSystem);
         const file = {cwd: process.cwd(), path: 'test/data/example.yaml'};
+        const stream = index({ environment: 'development', directives: [] });
 
-        readLinesStub.returns(Promise.resolve(['# Hello', '# World']));
-        mockedFileSystem.expects('writeLines').once().returns(Promise.resolve());
+        let lines;
 
-        index.write(file, 'utf8', (err, lines) => {
+        mockedFileSystem.expects('readFile').once().yields(null, '# Hello\r\n# World');
+        mockedFileSystem.expects('writeFile').once().yields(null);
+
+        stream.on('data', (results) => {
+            lines = results;
+        });
+
+        stream.once('end', () => {
+            expect(lines).to.be.array();
             expect(lines).to.be.ofSize(2);
             expect(lines[0]).to.equal('# Hello');
             expect(lines[1]).to.equal('# World');
 
             mockedFileSystem.verify();
-            mockedFileSystem.restore();
 
             done();
         });
+
+        stream.write(file, 'utf8');
+        stream.end();
     });
 
-    it('should throw a plugin error when one of the promises in the promise chain gets rejected', (done) => {
-        const readFileStub = sinon.stub(FileSystem, 'readFile');
-        const file = {cwd: process.cwd(), path: 'test/data/missing.yaml'};
+    it('should throw a plugin error when fs.writeFile blows up', (done) => {
+        const file = {cwd: process.cwd(), path: 'test/data/example.yaml'};
+        const stream = index({ environment: 'development', directives: [] });
 
-        readFileStub.throws('Error', 'Kaboom!');
+        let err;
 
-        index.write(file, 'utf8', (err, result) => {
+        mockedFileSystem.expects('readFile').once().yields(null, '# Hello\r\n# World');
+        mockedFileSystem.expects('writeFile').once().yields(new Error('Kaboom!'));
+
+        stream.on('error', (err) => {
+            expect(err.plugin).to.equal('gulp-yaml-update');
             expect(err.message).to.equal('Kaboom!');
-            expect(result).to.equal(undefined);
 
-            readFileStub.restore();
+            mockedFileSystem.verify();
+
             done();
         });
+
+        stream.write(file, 'utf8');
+        stream.end();
     });
 });

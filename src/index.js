@@ -4,7 +4,7 @@ const PluginError = require('plugin-error');
 const FileSystem = require('./FileSystem');
 const Logger = require('./Logger');
 const YamlUpdater = require('./YamlUpdater');
-const details = require('../package.json');
+const packageMetadata = require('../package.json');
 
 module.exports = (options) => {
     'use strict';
@@ -15,20 +15,23 @@ module.exports = (options) => {
         const relativePath = path.relative(file.cwd, file.path);
 
         let tempLines;
+        let error;
 
         FileSystem.readLines(relativePath, Logger)
-            .then((lines) => updater.update(lines))
+            .then((lines) => {
+                return updater.update(lines);
+            })
             .then((lines) => {
                 tempLines = lines;
                 return FileSystem.writeLines(relativePath, lines, Logger);
             })
             .then(() => {
                 Logger.log(`Successfuly updated the file "${relativePath}".`);
-                callback(null, lines);
+                callback(null, tempLines);
             })
             .catch((err) => {
-                callback(new PluginError(details.name, err.message));
-            });
+                callback(new PluginError(packageMetadata.name, err, { showStack: true }));
+            })
     });
 };
 
