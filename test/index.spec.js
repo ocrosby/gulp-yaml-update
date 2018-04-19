@@ -1,9 +1,6 @@
 'use strict';
 
-// const through2 = require('through2');
-
 const fs = require('fs');
-const FileSystem = require('../src/FileSystem');
 const chai = require('chai');
 const bluebird = require('bluebird');
 const sinon = require('sinon');
@@ -61,8 +58,6 @@ describe('index', () => {
     it('should throw a plugin error when fs.writeFile blows up', (done) => {
         const file = {cwd: process.cwd(), path: 'test/data/example.yaml'};
         const stream = index({ environment: 'development', directives: [] });
-
-        let err;
 
         mockedFileSystem.expects('readFile').once().yields(null, '# Hello\r\n# World');
         mockedFileSystem.expects('writeFile').once().yields(new Error('Kaboom!'));

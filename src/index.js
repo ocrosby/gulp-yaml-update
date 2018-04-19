@@ -15,7 +15,6 @@ module.exports = (options) => {
         const relativePath = path.relative(file.cwd, file.path);
 
         let tempLines;
-        let error;
 
         FileSystem.readLines(relativePath, Logger)
             .then((lines) => {
@@ -31,7 +30,7 @@ module.exports = (options) => {
             })
             .catch((err) => {
                 callback(new PluginError(packageMetadata.name, err, { showStack: true }));
-            })
+            });
     });
 };
 
