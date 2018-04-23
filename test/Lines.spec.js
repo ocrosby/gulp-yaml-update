@@ -28,6 +28,23 @@ describe('Lines', () => {
             expect(result).to.be.ofSize(0);
         });
 
+        it('returns an array containing two empty strings when given "\\r\\n"', () => {
+            const result = Lines.split('\r\n');
+
+            expect(result).to.be.ofSize(2);
+            expect(result[0]).to.equal('');
+            expect(result[1]).to.equal('');
+        });
+
+        it('returns an array containing three empty string when given "\\r\\n\\r\\n"', () => {
+            const result = Lines.split('\r\n\r\n');
+
+            expect(result).to.be.ofSize(3);
+            expect(result[0]).to.equal('');
+            expect(result[1]).to.equal('');
+            expect(result[2]).to.equal('');
+        });
+
         it('returns an array ["abc"] when given "abc"', () => {
             const result = Lines.split('abc');
 

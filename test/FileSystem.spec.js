@@ -52,6 +52,16 @@ describe('FileSystem', () => {
                 });
         });
 
+        it('preserves empty lines', () => {
+            sinon.stub(fs, 'readFile').yields(null, '\r\n');
+
+            return FileSystem.readLines('something', fakeLogger).should.be.fulfilled
+                .then((lines) => {
+                    expect(lines).to.be.ofSize(1);
+                    expect(lines[0]).to.equal('');
+                });
+        });
+
         it('rejects a promise when the readFile method returns an error', () => {
             const err = new Error('Some other cool error!');
 

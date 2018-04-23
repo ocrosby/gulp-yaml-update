@@ -324,6 +324,30 @@ describe('YamlUpdater', () => {
                 });
         });
 
+        it('preserves empty lines', () => {
+            updater.options.directives = [];
+
+            const lines = [''];
+
+            return updater.update(lines).should.be.fulfilled
+                .then((lines) => {
+                    expect(lines).to.be.ofSize(1);
+                    expect(lines[0]).to.equal('');
+                });
+        });
+
+        it('preserves lines containing only spaces', () => {
+            updater.options.directives = [];
+
+            const lines = ['   '];
+
+            return updater.update(lines).should.be.fulfilled
+                .then((lines) => {
+                    expect(lines).to.be.ofSize(1);
+                    expect(lines[0]).to.equal('   ');
+                });
+        });
+
         it('rejects a promise when getEnvironment throws an error', () => {
             const lines = ['title: ?'];
 
