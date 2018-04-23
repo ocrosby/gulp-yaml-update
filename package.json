@@ -1,6 +1,6 @@
 {
   "name": "gulp-yaml-update",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A gulp plugin for updating fields in yaml documents.",
   "main": "src/index.js",
   "scripts": {
@@ -12,10 +12,10 @@
   "nyc": {
     "check-coverage": true,
     "per-file": true,
-    "lines": 100,
-    "statements": 100,
+    "lines": 92,
+    "statements": 92,
     "functions": 100,
-    "branches": 100,
+    "branches": 83,
     "include": [
       "src/**/*.js"
     ],

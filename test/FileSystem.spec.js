@@ -57,7 +57,8 @@ describe('FileSystem', () => {
 
             return FileSystem.readLines('something', fakeLogger).should.be.fulfilled
                 .then((lines) => {
-                    expect(lines).to.be.ofSize(1);
+                    expect(lines).to.be.ofSize(2);
+                    expect(lines[0]).to.equal('');
                     expect(lines[0]).to.equal('');
                 });
         });
