@@ -313,6 +313,15 @@ describe('YamlUpdater', () => {
                 });
         });
 
+        it('does not change a version line without an associated value', () => {
+            const lines = ['version:'];
+
+            return updater.update(lines).should.be.fulfilled
+                .then((lines) => {
+                    expect(lines[0]).to.equal('version:');
+                });
+        });
+
         it('resolves a promise with an unaltered YAML line when the directives are empty', () => {
             updater.options.directives = [];
 

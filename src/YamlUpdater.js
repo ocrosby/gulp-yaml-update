@@ -76,6 +76,7 @@ module.exports = (() => {
 
         let pos;
         let property;
+        let suffix;
         let processedLine;
 
         if (YamlUpdater.IsCommentLine(line) || !YamlUpdater.IsPropertyLine(line)) {
@@ -87,6 +88,13 @@ module.exports = (() => {
 
         if (pos < 0) {
             // The specified property was not found.
+            return line;
+        }
+
+        suffix = line.substr(pos + property.length);
+        suffix = suffix.trim();
+
+        if (suffix.length === 0) {
             return line;
         }
 
